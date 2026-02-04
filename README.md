@@ -16,13 +16,13 @@ This service provides CRUD operations for managing database entries regarding a 
 
 ## Tech Stack
 - Java 21
-- Spring Boot 3.5.6
+- Spring Boot
 - Spring Web
 - Spring Data JPA
-- MySQL 8.0
 - Flyway (database migration)
 - Swagger UI (OpenAPI)
 - Docker
+- Docker Compose
 
 ## Getting Started
 ### Requirements
@@ -32,32 +32,19 @@ This service provides CRUD operations for managing database entries regarding a 
 ### Run locally
 #### Clone the repository:
 ```bash
-git clone github.com/marcav19/childsync
+git clone https://github.com/marcav19/childsync
 ```
 #### Run the application:
 ```bash
 docker compose up -d
-./mvnw spring-boot:run
 ```
-
 #### Access endpoints here:
-**http://localhost:8080**
-
-## Configuration
-For database setup, the following environment variables are required:
-
-| Variable | Description |
-| -------- | ----------- |
-| DB_URL | MySQL JDBC URL |
-| DB_USER | Database username |
-| DB_PASSWORD | Database password |
-
-Variables can be accessed at /spring/src/main/resources/application-local.properties
+**http://localhost:8000**
 
 ## API Documentation
 Swagger UI is utilized for API documentation. It can be accessed here:
 
-**http://localhost:8080/swagger-ui.html**
+**http://localhost:8000/swagger-ui.html**
 
 ### Example endpoint:
 #### Create user:
