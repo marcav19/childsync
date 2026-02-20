@@ -1,0 +1,58 @@
+<h2>Sleep</h2>
+<button class="create-button" (click)="toggleCreateForm()">Add</button>
+<button class="delete-button" (click)="delete()">Delete</button>
+<button class="update-button" (click)="toggleUpdateForm()">Update</button>
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            <th class="table-header">Start</th>
+            <th class="table-header">End</th>
+            <th class="table-header">Created by</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (sleep of sleepData(); track $index) {
+            <tr>
+                <td><input type="radio" name="sleep" [value]="sleep.id" (change)="selectedId.set(sleep.id)" /></td>
+                <td>{{ sleep.sleepStart }}</td>
+                <td>{{ sleep.sleepEnd }}</td>
+                <td>{{ sleep.userId }}</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (displayCreateForm()) {
+    <div id="create-container" >
+        <div id="create-form">
+            <form [formGroup]="sleepForm" (ngSubmit)="create()">
+                <label for="create-start">Start</label>
+                <input id="create-start" type="datetime-local" formControlName="sleepStart" /> <br>
+                <label for="create-end">End</label>
+                <input id="create-end" type="datetime-local" formControlName="sleepEnd" /> <br>
+                <label for="create-user">Created by</label>
+                <select id="create-user" name="users" formControlName="userId">
+                    <option value="1">Marc</option>
+                </select> <br>
+                <button type="submit">Create</button>
+            </form>
+        </div>
+    </div>
+}
+@if (displayUpdateForm()) {
+    <div id="update-container">
+        <div id="update-form">
+            <form [formGroup]="sleepForm" (ngSubmit)="update()">
+                <label for="update-start">Start</label>
+                <input id="update-start" type="datetime-local" formControlName="sleepStart" /> <br>
+                <label for="update-end">End</label>
+                <input id="update-end" type="datetime-local" formControlName="sleepEnd" /> <br>
+                <label for="update-user">Created by</label>
+                <select id="update-user" name="users" formControlName="userId">
+                    <option value="1">Marc</option>
+                </select> <br>
+                <button type="submit">Update</button>
+            </form>
+        </div>
+    </div>
+}

@@ -4,9 +4,9 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 import com.childsync.spring.model.Sleep;
 import com.childsync.spring.repository.SleepRepository;
@@ -16,12 +16,20 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RestController
 public class SleepController {
     
     @Autowired
     SleepRepository sleepRepo;
+
+    @GetMapping("/api/sleep/{id}")
+    public Sleep getSleepById(@PathVariable("id") Integer id) {
+        
+        return sleepRepo.findById(id).get();
+        
+    }
 
     @GetMapping("/api/sleep")
     public List<Sleep> getAllSleep() {
@@ -42,19 +50,11 @@ public class SleepController {
     }
     
     @DeleteMapping("/api/sleep/{id}")
-    public String deleteSleep(@PathVariable("id") Integer id) {
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    public void deleteSleep(@PathVariable("id") Integer id) {
 
-        if (sleepRepo.findById(id).equals(Optional.empty())) {
-
-            return "Entry not found";
-
-        } else {
-
-            sleepRepo.deleteById(id);
-            return "Entry deleted";
-
-        }
-
+        sleepRepo.deleteById(id);
+        
     }
 
     @PatchMapping("/api/sleep/{id}")

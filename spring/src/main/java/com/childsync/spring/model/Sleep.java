@@ -2,6 +2,7 @@ package com.childsync.spring.model;
 
 import java.sql.Timestamp;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,65 +15,69 @@ public class Sleep {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer sleep_id;
+    @Column(name = "sleep_id")
+    private Integer sleepId;
 
+    @Column(name = "sleep_start")
     @JsonFormat(pattern = "MM/dd/yyyy HH:mm")
-    private Timestamp sleep_start;
+    private Timestamp sleepStart;
 
+    @Column(name = "sleep_end")
     @JsonFormat(pattern = "MM/dd/yyyy HH:mm")
-    private Timestamp sleep_end;
+    private Timestamp sleepEnd;
 
-    private Integer user_id;
+    @Column(name = "user_id")
+    private Integer userId;
 
     protected Sleep() { }
 
     public Sleep(Timestamp start, Timestamp end, Integer userId) {
 
-        sleep_start = start;
-        sleep_end = end;
-        user_id = userId;
+        sleepStart = start;
+        sleepEnd = end;
+        this.userId = userId;
 
     }
 
     public Integer getId() {
 
-        return sleep_id;
+        return sleepId;
 
     }
 
     public Timestamp getStart() {
 
-        return sleep_start;
+        return sleepStart;
 
     }
 
     public Timestamp getEnd() {
 
-        return sleep_end;
+        return sleepEnd;
 
     }
 
     public Integer getUserId() {
 
-        return user_id;
+        return userId;
 
     }
 
     public void setStart(Timestamp start) {
 
-        sleep_start = start;
+        sleepStart = start;
 
     }
 
     public void setEnd(Timestamp end) {
 
-        sleep_end = end;
+        sleepEnd = end;
 
     }
 
     public void setUserId(Integer userId) {
 
-        user_id = userId;
+        this.userId = userId;
 
     }
 

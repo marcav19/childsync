@@ -32,11 +32,11 @@ This service provides CRUD operations for managing database entries regarding a 
 ### Run locally
 #### Clone the repository:
 ```bash
-git clone https://github.com/marcav19/childsync
+git clone https://github.com/marcav19/childsync && cd childsync/
 ```
 #### Run the application:
 ```bash
-docker compose up -d
+sudo docker compose up
 ```
 #### Access endpoints here:
 **http://localhost:8000**

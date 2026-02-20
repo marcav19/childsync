@@ -1,0 +1,12 @@
+header {
+    display: flex;
+    width: 100%;
+    margin: 0;
+    background-color: #C0E8F9;
+    padding-inline: 16px;
+    align-items: center;
+}
+
+h1 {
+    background-color: #C0E8F9;
+}
