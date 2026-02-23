@@ -1,8 +1,8 @@
 # ChildSync
-Spring Boot REST API for logging daily occurences in a young child's life such as meals, naps, etc.
+Full-stack web app for logging daily occurences in a young child's life such as meals, naps, etc.
 
 ## Overview
-This service provides CRUD operations for managing database entries regarding a child's meals, nap times, bathroom breaks, medications, appointments, baths, and events.
+This application provides CRUD operations for managing database entries regarding a child's meals, nap times, bathroom breaks, medications, appointments, baths, and events.
 
 ### Capabilities:
 - Creation and deletion of entries
@@ -23,23 +23,31 @@ This service provides CRUD operations for managing database entries regarding a 
 - Swagger UI (OpenAPI)
 - Docker
 - Docker Compose
+- Angular 20
 
 ## Getting Started
 ### Requirements
 - Java 21
 - Docker Compose
 - Git
+- Angular 20
 ### Run locally
 #### Clone the repository:
 ```bash
-git clone https://github.com/marcav19/childsync && cd childsync/
+git clone https://github.com/marcav19/childsync
+cd childsync/ && git checkout feature/add-ui
 ```
 #### Run the application:
 ```bash
-sudo docker compose up
+sudo docker compose up -d
 ```
-#### Access endpoints here:
-**http://localhost:8000**
+#### Start Angular server:
+```bash
+cd ui/ && npm install
+ng serve
+```
+#### Access application here:
+**http://localhost:4200**
 
 ## API Documentation
 Swagger UI is utilized for API documentation. It can be accessed here:
