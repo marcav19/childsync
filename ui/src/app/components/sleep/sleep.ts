@@ -15,6 +15,7 @@ export class Sleep {
   selectedId = signal<number | null>(null);
   displayUpdateForm = signal(false);
   displayCreateForm = signal(false);
+  displayDeleteConfirmation = signal(false);
   sleepForm = new FormGroup({
     sleepStart: new FormControl<string>(''),
     sleepEnd: new FormControl<string>(''),
@@ -33,21 +34,29 @@ export class Sleep {
                         this.sleepForm.patchValue({
                           sleepStart: s.start,
                           sleepEnd: s.end,
-                          userId : s.userId
+                          userId: s.userId
                         });
                      });
   }
 
   toggleCreateForm() {
     this.displayUpdateForm.set(false);
+    this.displayDeleteConfirmation.set(false);
     this.sleepForm.reset();
     this.displayCreateForm.set(true);
   }
 
   toggleUpdateForm() {
     this.displayCreateForm.set(false);
+    this.displayDeleteConfirmation.set(false);
     this.findSelectedRow();
     this.displayUpdateForm.set(true);
+  }
+
+  toggleDeleteConfirmation() {
+    this.displayCreateForm.set(false);
+    this.displayUpdateForm.set(false);
+    this.displayDeleteConfirmation.set(true);
   }
 
   loadSleep() {
@@ -57,7 +66,6 @@ export class Sleep {
 
   create() {
     const sleep = {
-      'id' : 0,
       'sleep_start' : (this.sleepForm.value.sleepStart!.replace('T', ' ') ?? '') + ':00',
       'sleep_end' : (this.sleepForm.value.sleepEnd!.replace('T', ' ') ?? '') + ':00',
       'user_id' : this.sleepForm.value.userId ?? 0

@@ -1,0 +1,74 @@
+<h2>Appointments</h2>
+<button class="create-button" (click)="toggleCreateForm()">Add</button>
+<button class="delete-button" (click)="toggleDeleteConfirmation()">Delete</button>
+<button class="update-button" (click)="toggleUpdateForm()">Update</button>
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            <th class="table-header">Datetime</th>
+            <th class="table-header">Reason</th>
+            <th class="table-header">Result</th>
+            <th class="table-header">Created by</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (appointment of appointmentData(); track appointment.id) {
+            <tr>
+                <td><input type="radio" name="appointment" [value]="appointment.id" (change)="selectedId.set(appointment.id)" /></td>
+                <td>{{ appointment.dateTime }}</td>
+                <td>{{ appointment.reason }}</td>
+                <td>{{ appointment.result }}</td>
+                <td>{{ appointment.userId }}</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (displayCreateForm()) {
+    <div id="create-container" >
+        <div id="create-form">
+            <form [formGroup]="appointmentForm" (ngSubmit)="create()">
+                <label for="create-datetime">Datetime</label>
+                <input id="create-datetime" type="datetime-local" formControlName="appointmentDateTime" /> <br>
+                <label for="create-reason">Reason</label>
+                <input id="create-reason" type="text" maxlength="45" formControlName="appointmentReason" /> <br>
+                <label for="create-result">Result</label>
+                <input id="create-result" type="text" maxlength="45" formControlName="appointmentResult" /> <br>
+                <label for="create-user">Created by</label>
+                <select id="create-user" name="users" formControlName="userId">
+                    <option value="1">Marc</option>
+                </select> <br>
+                <button type="submit">Create</button>
+            </form>
+        </div>
+    </div>
+}
+@if (displayUpdateForm()) {
+    <div id="update-container">
+        <div id="update-form">
+            <form [formGroup]="appointmentForm" (ngSubmit)="update()">
+                <label for="update-datetime">Datetime</label>
+                <input id="update-datetime" type="datetime-local" formControlName="appointmentDatetime" /> <br>
+                <label for="update-reason">Reason</label>
+                <input id="update-reason" type="text" maxlength="45" formControlName="appointmentReason" /> <br>
+                <label for="update-result">Result</label>
+                <input id="update-result" type="text" maxlength="45" formControlName="appointmentResult" /> <br>
+                <label for="update-user">Created by</label>
+                <select id="update-user" name="users" formControlName="userId">
+                    <option value="1">Marc</option>
+                </select> <br>
+                <button type="submit">Update</button>
+            </form>
+        </div>
+    </div>
+}
+
+@if (displayDeleteConfirmation()) {
+    <div id="delete-container">
+        <div id="delete-confirmation">
+            <p>Confirm deletion</p>
+            <button id="confirm" type="button" (click)="delete()">Delete</button>
+            <button id="cancel" type="button" (click)="displayDeleteConfirmation.set(false)">Cancel</button>
+        </div>
+    </div>
+}

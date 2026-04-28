@@ -32,7 +32,7 @@ public class UserController {
     @PostMapping("/api/users")
     public User createUser(@RequestBody Map<String, String> body) {
         
-        User user = new User(body.get("user_name"), body.get("user_email"));
+        User user = new User(body.get("name"), body.get("email"));
         
         return userRepo.save(user);
 
@@ -60,18 +60,18 @@ public class UserController {
         User user = userRepo.findById(id).get();
 
         Set<String> fields = new HashSet<String>();
-        fields.add("user_name");
-        fields.add("user_email");
+        fields.add("name");
+        fields.add("email");
 
         for (String key : body.keySet()) {
 
             switch(key) {
 
-                case "user_name":
-                    user.setName(body.get("user_name"));
+                case "name":
+                    user.setName(body.get("name"));
                     break;
                 case "user_email":
-                    user.setEmail(body.get("user_email"));
+                    user.setEmail(body.get("email"));
                     break;
             
             }

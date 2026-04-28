@@ -1,20 +1,20 @@
 CREATE TABLE users (
-  user_id int NOT NULL AUTO_INCREMENT,
-  user_name varchar(15) NOT NULL,
-  user_email varchar(45) NOT NULL,
-  PRIMARY KEY (user_id),
-  UNIQUE KEY (user_email)
+  id int NOT NULL AUTO_INCREMENT,
+  name varchar(15) NOT NULL,
+  email varchar(45) NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY (email)
 );
 
 CREATE TABLE appointments (
   appointment_id int NOT NULL AUTO_INCREMENT,
-  appointment_reason varchar(45) NOT NULL,
   appointment_datetime datetime NOT NULL,
+  appointment_reason varchar(45) NOT NULL,
   appointment_result varchar(45) NOT NULL,
   user_id int NOT NULL,
   PRIMARY KEY (appointment_id),
   UNIQUE (appointment_datetime),
-  CONSTRAINT appointment_user_id FOREIGN KEY (user_id) REFERENCES users(user_id)
+  CONSTRAINT appointment_user_id FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
 CREATE TABLE baths (
@@ -23,52 +23,52 @@ CREATE TABLE baths (
   user_id int NOT NULL,
   PRIMARY KEY (bath_id),
   UNIQUE (bath_datetime),
-  CONSTRAINT bath_user_id FOREIGN KEY (user_id) REFERENCES users(user_id)
+  CONSTRAINT bath_user_id FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-CREATE TABLE events (
-  event_id int NOT NULL AUTO_INCREMENT,
-  event_name varchar(45) NOT NULL,
-  event_datetime datetime NOT NULL,
-  user_id int NOT NULL,
-  PRIMARY KEY (event_id),
-  UNIQUE (event_datetime),
-  CONSTRAINT event_user_id FOREIGN KEY (user_id) REFERENCES users(user_id)
+CREATE TABLE activities (
+  id int NOT NULL AUTO_INCREMENT,
+  datetime datetime NOT NULL,
+  name varchar(45) NOT NULL,
+  userid int NOT NULL,
+  PRIMARY KEY (id),
+  UNIQUE (datetime),
+  CONSTRAINT activity_user_id FOREIGN KEY (userid) REFERENCES users(id)
 );
 
 CREATE TABLE meals (
   meal_id int NOT NULL AUTO_INCREMENT,
-  meal_name varchar(40) NOT NULL,
   meal_datetime datetime NOT NULL,
-  meal_comment varchar(25) DEFAULT NULL,
+  meal_name varchar(40) NOT NULL,
+  meal_comment varchar(25) NOT NULL,
   user_id int NOT NULL,
   PRIMARY KEY (meal_id),
   UNIQUE (meal_datetime),
-  CONSTRAINT meal_user_id FOREIGN KEY (user_id) REFERENCES users(user_id)
+  CONSTRAINT meal_user_id FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-CREATE TABLE medicine (
+CREATE TABLE medicines (
   medicine_id int NOT NULL AUTO_INCREMENT,
-  medicine_name varchar(45) NOT NULL,
   medicine_datetime datetime NOT NULL,
+  medicine_name varchar(45) NOT NULL,
   medicine_dosage varchar(20) NOT NULL,
   user_id int NOT NULL,
   PRIMARY KEY (medicine_id),
   UNIQUE (medicine_datetime),
-  CONSTRAINT medicine_user_id FOREIGN KEY (user_id) REFERENCES users(user_id)
+  CONSTRAINT medicine_user_id FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-CREATE TABLE potty (
+CREATE TABLE potties (
   potty_id int NOT NULL AUTO_INCREMENT,
-  potty_description varchar(45) NOT NULL,
   potty_datetime datetime NOT NULL,
+  potty_description varchar(45) NOT NULL,
   user_id int NOT NULL,
   PRIMARY KEY (potty_id),
   UNIQUE (potty_datetime),
-  CONSTRAINT potty_user_id FOREIGN KEY (user_id) REFERENCES users(user_id)
+  CONSTRAINT potty_user_id FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-CREATE TABLE sleep (
+CREATE TABLE sleeps (
   sleep_id int NOT NULL AUTO_INCREMENT,
   sleep_start datetime NOT NULL,
   sleep_end datetime NOT NULL,
@@ -76,5 +76,8 @@ CREATE TABLE sleep (
   PRIMARY KEY (sleep_id),
   UNIQUE (sleep_start),
   UNIQUE (sleep_end),
-  CONSTRAINT sleep_user_id FOREIGN KEY (user_id) REFERENCES users(user_id)
+  CONSTRAINT sleep_user_id FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+INSERT INTO users (name, email)
+VALUES ('test', 'test@email.com');

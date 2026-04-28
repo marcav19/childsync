@@ -1,0 +1,74 @@
+<h2>Medicine</h2>
+<button class="create-button" (click)="toggleCreateForm()">Add</button>
+<button class="delete-button" (click)="toggleDeleteConfirmation()">Delete</button>
+<button class="update-button" (click)="toggleUpdateForm()">Update</button>
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            <th class="table-header">Datetime</th>
+            <th class="table-header">Name</th>
+            <th class="table-header">Dosage</th>
+            <th class="table-header">Created by</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (medicine of medicineData(); track medicine.id) {
+            <tr>
+                <td><input type="radio" name="medicine" [value]="medicine.id" (change)="selectedId.set(medicine.id)" /></td>
+                <td>{{ medicine.dateTime }}</td>
+                <td>{{ medicine.name }}</td>
+                <td>{{ medicine.dosage }}</td>
+                <td>{{ medicine.userId }}</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (displayCreateForm()) {
+    <div id="create-container" >
+        <div id="create-form">
+            <form [formGroup]="medicineForm" (ngSubmit)="create()">
+                <label for="create-datetime">Start</label>
+                <input id="create-datetime" type="datetime-local" formControlName="medicineDateTime" /> <br>
+                <label for="create-name">Name</label>
+                <input id="create-name" type="text" maxlength="45" formControlName="medicineName" /> <br>
+                <label for="create-dosage">Dosage</label>
+                <input id="create-dosage" type="text" maxlength="20" formControlName="medicineDosage" /> <br>
+                <label for="create-user">Created by</label>
+                <select id="create-user" name="users" formControlName="userId">
+                    <option value="1">Marc</option>
+                </select> <br>
+                <button type="submit">Create</button>
+            </form>
+        </div>
+    </div>
+}
+@if (displayUpdateForm()) {
+    <div id="update-container">
+        <div id="update-form">
+            <form [formGroup]="medicineForm" (ngSubmit)="update()">
+                <label for="update-datetime">Start</label>
+                <input id="update-datetime" type="datetime-local" formControlName="medicineDateTime" /> <br>
+                <label for="update-name">Name</label>
+                <input id="update-name" type="text" maxlength="45" formControlName="medicineName" /> <br>
+                <label for="update-dosage">Dosage</label>
+                <input id="update-dosage" type="text" maxlength="20" formControlName="medicineDosage" /> <br>
+                <label for="update-user">Created by</label>
+                <select id="update-user" name="users" formControlName="userId">
+                    <option value="1">Marc</option>
+                </select> <br>
+                <button type="submit">Update</button>
+            </form>
+        </div>
+    </div>
+}
+
+@if (displayDeleteConfirmation()) {
+    <div id="delete-container">
+        <div id="delete-confirmation">
+            <p>Confirm deletion</p>
+            <button id="confirm" type="button" (click)="delete()">Delete</button>
+            <button id="cancel" type="button" (click)="displayDeleteConfirmation.set(false)">Cancel</button>
+        </div>
+    </div>
+}

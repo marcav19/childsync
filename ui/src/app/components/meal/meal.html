@@ -1,4 +1,4 @@
-<h2>Sleep</h2>
+<h2>Meals</h2>
 <button class="create-button" (click)="toggleCreateForm()">Add</button>
 <button class="delete-button" (click)="toggleDeleteConfirmation()">Delete</button>
 <button class="update-button" (click)="toggleUpdateForm()">Update</button>
@@ -6,18 +6,20 @@
     <thead>
         <tr>
             <th></th>
-            <th class="table-header">Start</th>
-            <th class="table-header">End</th>
+            <th class="table-header">Datetime</th>
+            <th class="table-header">Name</th>
+            <th class="table-header">Comment</th>
             <th class="table-header">Created by</th>
         </tr>
     </thead>
     <tbody>
-        @for (sleep of sleepData(); track sleep.id) {
+        @for (meal of mealData(); track meal.id) {
             <tr>
-                <td><input type="radio" name="sleep" [value]="sleep.id" (change)="selectedId.set(sleep.id)" /></td>
-                <td>{{ sleep.sleepStart }}</td>
-                <td>{{ sleep.sleepEnd }}</td>
-                <td>{{ sleep.userId }}</td>
+                <td><input type="radio" name="meal" [value]="meal.id" (change)="selectedId.set(meal.id)" /></td>
+                <td>{{ meal.dateTime }}</td>
+                <td>{{ meal.name }}</td>
+                <td>{{ meal.comment }}</td>
+                <td>{{ meal.userId }}</td>
             </tr>
         }
     </tbody>
@@ -25,11 +27,13 @@
 @if (displayCreateForm()) {
     <div id="create-container" >
         <div id="create-form">
-            <form [formGroup]="sleepForm" (ngSubmit)="create()">
-                <label for="create-start">Start</label>
-                <input id="create-start" type="datetime-local" formControlName="sleepStart" /> <br>
-                <label for="create-end">End</label>
-                <input id="create-end" type="datetime-local" formControlName="sleepEnd" /> <br>
+            <form [formGroup]="mealForm" (ngSubmit)="create()">
+                <label for="create-datetime">Datetime</label>
+                <input id="create-datetime" type="datetime-local" formControlName="mealDateTime" /> <br>
+                <label for="create-name">Name</label>
+                <input id="create-name" type="text" maxlength="40" formControlName="mealName" /> <br>
+                <label for="create-comment">Comment</label>
+                <input id="create-comment" type="text" maxlength="25" formControlName="mealComment" /> <br>
                 <label for="create-user">Created by</label>
                 <select id="create-user" name="users" formControlName="userId">
                     <option value="1">Marc</option>
@@ -42,11 +46,13 @@
 @if (displayUpdateForm()) {
     <div id="update-container">
         <div id="update-form">
-            <form [formGroup]="sleepForm" (ngSubmit)="update()">
-                <label for="update-start">Start</label>
-                <input id="update-start" type="datetime-local" formControlName="sleepStart" /> <br>
-                <label for="update-end">End</label>
-                <input id="update-end" type="datetime-local" formControlName="sleepEnd" /> <br>
+            <form [formGroup]="mealForm" (ngSubmit)="update()">
+                <label for="update-datetime">Datetime</label>
+                <input id="update-datetime" type="datetime-local" formControlName="mealDateTime" /> <br>
+                <label for="update-name">Name</label>
+                <input id="update-name" type="text" maxlength="40" formControlName="mealName" /> <br>
+                <label for="update-comment">Comment</label>
+                <input id="update-comment" type="text" maxlength="25" formControlName="mealComment" /> <br>
                 <label for="update-user">Created by</label>
                 <select id="update-user" name="users" formControlName="userId">
                     <option value="1">Marc</option>

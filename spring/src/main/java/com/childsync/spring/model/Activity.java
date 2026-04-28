@@ -1,5 +1,6 @@
 package com.childsync.spring.model;
 
+import java.time.LocalDateTime;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -8,44 +9,59 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "activities")
+public class Activity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
     private Integer id;
+    
+    @NotNull
+    private LocalDateTime datetime;
 
     @NotNull
     private String name;
 
     @NotNull
-    private String email;
+    private Integer userid;
 
-    protected User() { }
+    protected Activity() { }
 
-    public User(String name, String email) {
-        
+    public Activity(LocalDateTime datetime, String name, Integer userid) {
+
+        this.datetime = datetime;
         this.name = name;
-        this.email = email;
-    
+        this.userid = userid;
+
     }
 
     public Integer getId() {
-    
+
         return id;
+
+    }
     
+    public LocalDateTime getDatetime() {
+
+        return datetime;
+
     }
 
     public String getName() {
-    
+
         return name;
-    
+
     }
 
-    public String getEmail() {
+    public Integer getUserid() {
+
+        return userid;
+
+    }
     
-        return email;
+    public void setDatetime(LocalDateTime datetime) {
+    
+        this.datetime = datetime;
     
     }
     
@@ -55,9 +71,9 @@ public class User {
 
     }
 
-    public void setEmail(String email) {
+    public void setUserid(Integer userid) {
 
-        this.email = email;
+        this.userid = userid;
 
     }
     

@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { Sleep } from "../components/sleep/sleep";
 import { Menu } from '../components/menu/menu';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-home',
-  imports: [Menu, Sleep],
+  imports: [Menu, RouterOutlet],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
