@@ -1,7 +1,7 @@
 <h2>Activities</h2>
 <button class="create-button" (click)="toggleCreateForm()">Add</button>
-<button class="delete-button" (click)="toggleDeleteConfirmation()">Delete</button>
-<button class="update-button" (click)="toggleUpdateForm()">Update</button>
+<button class="delete-button" [disabled]="isSelected()" (click)="toggleDeleteConfirmation()">Delete</button>
+<button class="update-button" [disabled]="isSelected()" (click)="toggleUpdateForm()">Update</button>
 <table>
     <thead>
         <tr>
@@ -12,12 +12,12 @@
         </tr>
     </thead>
     <tbody>
-        @for (activity of activityData(); track activity.id) {
+        @for (activity of activities(); track activity.id) {
             <tr>
-                <td><input type="radio" name="activity" [value]="activity.id" (change)="selectedId.set(activity.id)" /></td>
-                <td>{{ activity.datetime }}</td>
+                <td><input type="radio" name="activity" [value]="activity.id" (change)="isSelected.set(false); selectedActivity.set(activity.id);" /></td>
+                <td>{{ activity.dateTime | date:'short' }}</td>
                 <td>{{ activity.name }}</td>
-                <td>{{ activity.userid }}</td>
+                <td>{{ activity.userName }}</td>
             </tr>
         }
     </tbody>
@@ -25,36 +25,40 @@
 @if (displayCreateForm()) {
     <div id="create-container" >
         <div id="create-form">
-            <form [formGroup]="activityForm" (ngSubmit)="create()">
+            <form autocomplete="off" [formGroup]="activityForm" (ngSubmit)="create()">
                 <label for="create-datetime">Datetime</label>
                 <input id="create-datetime" type="datetime-local" formControlName="activityDateTime" /> <br>
                 <label for="create-name">Name</label>
                 <input id="create-name" type="text" maxlength="45" formControlName="activityName" /> <br>
                 <label for="create-user">Created by</label>
                 <select id="create-user" name="users" formControlName="userId">
-                    <option value="1">Marc</option>
+                    @for (user of users(); track user.id) {
+                        <option [value]="user.id">{{ user.name }}</option>
+                    }
                 </select> <br>
                 <button type="submit">Create</button>
+                <button id="cancel" type="button" (click)="displayCreateForm.set(false)">Cancel</button>
             </form>
-            <button id="cancel" type="button" (click)="displayCreateForm.set(false)">Cancel</button>
         </div>
     </div>
 }
 @if (displayUpdateForm()) {
     <div id="update-container">
         <div id="update-form">
-            <form [formGroup]="activityForm" (ngSubmit)="update()">
+            <form autocomplete="off" [formGroup]="activityForm" (ngSubmit)="update()">
                 <label for="update-datetime">Datetime</label>
                 <input id="update-datetime" type="datetime-local" formControlName="activityDateTime" /> <br>
                 <label for="update-name">Name</label>
                 <input id="update-name" type="text" maxlength="45" formControlName="activityName" /> <br>
                 <label for="update-user">Created by</label>
                 <select id="update-user" name="users" formControlName="userId">
-                    <option value="1">Marc</option>
+                    @for (user of users(); track user.id) {
+                        <option [value]="user.id">{{ user.name }}</option>
+                    }
                 </select> <br>
                 <button type="submit">Update</button>
+                <button id="cancel" type="button" (click)="displayUpdateForm.set(false)">Cancel</button>
             </form>
-            <button id="cancel" type="button" (click)="displayUpdateForm.set(false)">Cancel</button>
         </div>
     </div>
 }
@@ -62,7 +66,7 @@
 @if (displayDeleteConfirmation()) {
     <div id="delete-container">
         <div id="delete-confirmation">
-            <p>Confirm deletion</p>
+            <p>Confirm deletion.</p>
             <button id="confirm" type="button" (click)="delete()">Delete</button>
             <button id="cancel" type="button" (click)="displayDeleteConfirmation.set(false)">Cancel</button>
         </div>

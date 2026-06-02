@@ -3,5 +3,6 @@ export interface IAppointment {
     reason: string,
     dateTime: string,
     result: string,
-    userId: number
+    userId: number,
+    userName: string
 }

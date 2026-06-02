@@ -1,12 +1,15 @@
 package com.childsync.spring.model;
 
-import java.sql.Timestamp;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "appointments")
@@ -14,79 +17,85 @@ public class Appointment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer appointment_id;
+    private Integer id;
+    
+    @Column(name = "datetime", unique = true)
+    @NotNull
+    private LocalDateTime dateTime;
 
-    private String appointment_reason;
+    @NotNull
+    private String reason;
 
-    @JsonFormat(pattern = "MM/dd/yyyy HH:mm")
-    private Timestamp appointment_datetime;
+    @NotNull
+    private String result;
 
-    private String appointment_result;
-
-    private Integer user_id;
+    @ManyToOne
+    @JoinColumn(name = "userid")
+    @NotNull
+    private User user;
 
     protected Appointment() { }
 
-    public Appointment(String reason, Timestamp dateTime, String result, Integer userId) {
+    public Appointment(LocalDateTime dateTime, String reason, String result, User user) {
 
-        appointment_reason = reason;
-        appointment_datetime = dateTime;
-        appointment_result = result;
-        user_id = userId;
+        this.dateTime = dateTime;
+        this.reason = reason;
+        this.result = result;
+        this.user = user;
 
     }
 
     public Integer getId() {
 
-        return appointment_id;
+        return id;
+
+    }
+    
+    public LocalDateTime getDateTime() {
+
+        return dateTime;
 
     }
 
     public String getReason() {
 
-        return appointment_reason;
-
-    }
-
-    public Timestamp getDateTime() {
-
-        return appointment_datetime;
+        return reason;
 
     }
 
     public String getResult() {
 
-        return appointment_result;
+        return result;
 
     }
 
-    public Integer getUserId() {
+    public User getUser() {
 
-        return user_id;
+        return user;
+
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+
+        this.dateTime = dateTime;
 
     }
 
     public void setReason(String reason) {
 
-        appointment_reason = reason;
-
-    }
-
-    public void setDateTime(Timestamp dateTime) {
-
-        appointment_datetime = dateTime;
+        this.reason = reason;
 
     }
 
     public void setResult(String result) {
 
-        appointment_result = result;
+        this.result = result;
     
     }
     
-    public void setUserId(Integer userId) {
+    public void setUser(User user) {
 
-        user_id = userId;
+        this.user = user;
 
     }
     

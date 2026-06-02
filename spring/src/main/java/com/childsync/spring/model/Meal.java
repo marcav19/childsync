@@ -1,14 +1,15 @@
 package com.childsync.spring.model;
 
-import java.sql.Timestamp;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
+import java.time.LocalDateTime;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "meals")
@@ -16,87 +17,84 @@ public class Meal {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer meal_id;
+    private Integer id;
+    
+    @Column(name = "datetime", unique = true)
+    @NotNull
+    private LocalDateTime dateTime;
 
-    private String meal_name;
+    @NotNull
+    private String name;
 
-    @JsonFormat (pattern = "MM/dd/yyyy HH:mm")
-    private Timestamp meal_datetime;
+    @NotNull
+    private String comment;
 
-    private String meal_comment;
-
-    private Integer user_id;
+    @ManyToOne
+    @JoinColumn(name = "userid")
+    @NotNull
+    private User user;
 
     protected Meal() { }
 
-    public Meal(String name, Timestamp dateTime, String comment, Integer userId) {
+    public Meal(String name, LocalDateTime dateTime, String comment, User user) {
 
-        meal_name = name;
-        meal_datetime = dateTime;
-        meal_comment = comment;
-        user_id = userId;
-        
-    }
-
-    public Meal(String name, Timestamp dateTime, Integer userId) {
-
-        meal_name = name;
-        meal_datetime = dateTime;
-        user_id = userId;
+        this.name = name;
+        this.dateTime = dateTime;
+        this.comment = comment;
+        this.user = user;
         
     }
 
     public Integer getId() {
 
-        return meal_id;
+        return id;
 
+    }
+    
+    public LocalDateTime getDateTime() {
+
+        return dateTime;
+    
     }
 
     public String getName() {
 
-        return meal_name;
+        return name;
 
-    }
-
-    public Timestamp getDateTime() {
-
-        return meal_datetime;
-
-    }
-
+    }        
     public String getComment() {
 
-        return meal_comment;
+        return comment;
 
     }
 
-    public Integer getUserId() {
+    public User getUser() {
 
-        return user_id;
+        return user;
+
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+
+        this.dateTime = dateTime;
 
     }
 
     public void setName(String name) {
 
-        meal_name = name;
-
-    }
-
-    public void setDateTime(Timestamp dateTime) {
-
-        meal_datetime = dateTime;
+        this.name = name;
 
     }
 
     public void setComment(String comment) {
 
-        meal_comment = comment;
+        this.comment = comment;
 
     }
 
-    public void setUserId(Integer userId) {
+    public void setUser(User user) {
 
-        user_id = userId;
+        this.user = user;
 
     }
     

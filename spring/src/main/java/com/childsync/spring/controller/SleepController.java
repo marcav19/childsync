@@ -1,91 +1,65 @@
 package com.childsync.spring.controller;
 
-import java.sql.Timestamp;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
-import com.childsync.spring.model.Sleep;
-import com.childsync.spring.repository.SleepRepository;
+import com.childsync.spring.dto.request.SleepRequest;
+import com.childsync.spring.dto.response.SleepResponse;
+import com.childsync.spring.service.SleepService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RestController
+@RequestMapping("/api/sleeps")
 public class SleepController {
     
-    @Autowired
-    SleepRepository sleepRepo;
+    private final SleepService sleepService;
 
-    @GetMapping("/api/sleep/{id}")
-    public Sleep getSleepById(@PathVariable("id") Integer id) {
+    public SleepController(SleepService sleepService) {
+
+        this.sleepService = sleepService;
+
+    }
+
+    @GetMapping("/{id}")
+    public SleepResponse getSleepById(@PathVariable("id") Integer id) {
         
-        return sleepRepo.findById(id).get();
+        return sleepService.getById(id);
         
     }
 
-    @GetMapping("/api/sleep")
-    public List<Sleep> getAllSleep() {
+    @GetMapping
+    public List<SleepResponse> getAllSleep() {
 
-        return sleepRepo.findAll();
-
-    }
-    
-    @PostMapping("/api/sleep")
-    public Sleep createSleep(@RequestBody Map<String, String> body) {
-        
-        Sleep sleep = new Sleep(Timestamp.valueOf(body.get("sleep_start")),
-                                Timestamp.valueOf(body.get("sleep_end")),
-                                Integer.parseInt((body.get("user_id"))));
-        
-        return sleepRepo.save(sleep);
+        return sleepService.getAll();
 
     }
     
-    @DeleteMapping("/api/sleep/{id}")
+    @PostMapping
+    public SleepResponse createSleep(@RequestBody SleepRequest request) {
+        
+        return sleepService.create(request);
+
+    }
+    
+    @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteSleep(@PathVariable("id") Integer id) {
+    public String deleteSleep(@PathVariable("id") Integer id) {
 
-        sleepRepo.deleteById(id);
+        return sleepService.delete(id);
         
     }
 
-    @PatchMapping("/api/sleep/{id}")
-    public Sleep updateSleep(@PathVariable("id") Integer id, @RequestBody Map<String, String> body) {
+    @PutMapping("/{id}")
+    public SleepResponse updateSleep(@PathVariable("id") Integer id, @RequestBody SleepRequest request) {
  
-        Sleep sleep = sleepRepo.findById(id).get();
-
-        Set<String> fields = new HashSet<String>();
-        fields.add("sleep_start");
-        fields.add("sleep_end");
-        fields.add("user_id");
-
-        for (String key : body.keySet()) {
-
-            switch(key) {
-
-                case "sleep_start":
-                    sleep.setStart(Timestamp.valueOf(body.get("sleep_start")));
-                    break;
-                case "sleep_end":
-                    sleep.setEnd(Timestamp.valueOf(body.get("sleep_end")));
-                    break;
-                case "user_id":
-                    sleep.setUserId(Integer.parseInt((body.get("user_id"))));
-                    break;
-            
-            }
-
-        }
-
-        return sleepRepo.save(sleep);
+        return sleepService.update(id, request);
 
     }
 

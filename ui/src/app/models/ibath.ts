@@ -1,5 +1,6 @@
 export interface IBath {
     id: number,
     dateTime: string,
-    userId: number
+    userId: number,
+    userName: string
 }

@@ -1,10 +1,13 @@
 package com.childsync.spring.model;
 
 import java.time.LocalDateTime;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
@@ -16,22 +19,25 @@ public class Activity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
+    @Column(name = "datetime", unique = true)
     @NotNull
-    private LocalDateTime datetime;
+    private LocalDateTime dateTime;
 
     @NotNull
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "userid")
     @NotNull
-    private Integer userid;
+    private User user;
 
     protected Activity() { }
 
-    public Activity(LocalDateTime datetime, String name, Integer userid) {
+    public Activity(LocalDateTime dateTime, String name, User user) {
 
-        this.datetime = datetime;
+        this.dateTime = dateTime;
         this.name = name;
-        this.userid = userid;
+        this.user = user;
 
     }
 
@@ -41,9 +47,9 @@ public class Activity {
 
     }
     
-    public LocalDateTime getDatetime() {
+    public LocalDateTime getDateTime() {
 
-        return datetime;
+        return dateTime;
 
     }
 
@@ -53,15 +59,15 @@ public class Activity {
 
     }
 
-    public Integer getUserid() {
+    public User getUser() {
 
-        return userid;
+        return user;
 
     }
     
-    public void setDatetime(LocalDateTime datetime) {
+    public void setDateTime(LocalDateTime dateTime) {
     
-        this.datetime = datetime;
+        this.dateTime = dateTime;
     
     }
     
@@ -71,9 +77,9 @@ public class Activity {
 
     }
 
-    public void setUserid(Integer userid) {
+    public void setUser(User user) {
 
-        this.userid = userid;
+        this.user = user;
 
     }
     

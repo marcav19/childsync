@@ -1,95 +1,101 @@
 package com.childsync.spring.model;
 
-import java.sql.Timestamp;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
+import java.time.LocalDateTime;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table (name = "medicine")
+@Table(name = "medicines")
 public class Medicine {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer medicine_id;
+    private Integer id;
+    
+    @Column(name = "datetime", unique = true)
+    @NotNull
+    private LocalDateTime dateTime;
 
-    private String medicine_name;
+    @NotNull
+    private String name;
 
-    @JsonFormat(pattern = "MM/dd/yyyy HH:mm")
-    private Timestamp medicine_datetime;
+    @NotNull
+    private String dosage;
 
-    private String medicine_dosage;
-
-    private Integer user_id;
+    @ManyToOne
+    @JoinColumn(name = "userid")
+    @NotNull
+    private User user;
 
     protected Medicine() { }
 
-    public Medicine(String name, Timestamp dateTime, String dosage, Integer userId) {
+    public Medicine(LocalDateTime dateTime, String name, String dosage, User user) {
 
-        medicine_name = name;
-        medicine_datetime = dateTime;
-        medicine_dosage = dosage;
-        user_id = userId;
-
+        this.dateTime = dateTime;
+        this.name = name;
+        this.dosage = dosage;
+        this.user = user;
 
     }
 
     public Integer getId() {
 
-        return medicine_id;
+        return id;
+
+    }
+
+    public LocalDateTime getDateTime() {
+
+        return dateTime;
 
     }
 
     public String getName() {
 
-        return medicine_name;
-
-    }
-
-    public Timestamp getDateTime() {
-
-        return medicine_datetime;
+        return name;
 
     }
 
     public String getDosage() {
 
-        return medicine_dosage;
+        return dosage;
 
     }
 
-    public Integer getUserId() {
+    public User getUser() {
 
-        return user_id;
+        return user;
+
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+
+        this.dateTime = dateTime;
 
     }
 
     public void setName(String name) {
 
-        medicine_name = name;
-
-    }
-
-    public void setDateTime(Timestamp dateTime) {
-
-        medicine_datetime = dateTime;
+        this.name = name;
 
     }
 
     public void setDosage(String dosage) {
 
-        medicine_dosage = dosage;
+        this.dosage = dosage;
 
     }
 
-    public void setUserId(Integer userId) {
+    public void setUser(User user) {
 
-        user_id = userId;
+        this.user = user;
 
     }
     

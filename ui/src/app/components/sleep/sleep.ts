@@ -2,20 +2,26 @@ import { Component, inject, signal } from '@angular/core';
 import { SleepService } from '../../services/sleep-service';
 import { ISleep } from '../../models/isleep';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
+import { UserService } from '../../services/user-service';
+import { IUser } from '../../models/iuser';
 
 @Component({
   selector: 'app-sleep',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './sleep.html',
   styleUrl: './sleep.css',
 })
 export class Sleep {
   sleepService = inject(SleepService);
-  sleepData = signal<Array<ISleep>>([]);
-  selectedId = signal<number | null>(null);
+  userService = inject(UserService);
+  sleeps = signal<Array<ISleep>>([]);
+  users = signal<Array<IUser>>([]);
+  selectedSleep = signal<number | null>(null);
   displayUpdateForm = signal(false);
   displayCreateForm = signal(false);
   displayDeleteConfirmation = signal(false);
+  isSelected = signal(true);
   sleepForm = new FormGroup({
     sleepStart: new FormControl<string>(''),
     sleepEnd: new FormControl<string>(''),
@@ -23,19 +29,20 @@ export class Sleep {
   });
   
   ngOnInit() {
-    this.loadSleep();
+    this.loadSleeps();
+    this.loadUsers();
   }
 
   findSelectedRow() {
-    this.sleepService.getSleepById(this.selectedId()!)
+    this.sleepService.getSleepById(this.selectedSleep()!)
                      .subscribe(s => {
-                        s.start = s.start.slice(0, 16);
-                        s.end = s.end.slice(0, 16);
-                        this.sleepForm.patchValue({
-                          sleepStart: s.start,
-                          sleepEnd: s.end,
-                          userId: s.userId
-                        });
+                       s.start = s.start.slice(0, 16);
+                       s.end = s.end.slice(0, 16);
+                       this.sleepForm.patchValue({
+                         sleepStart: s.start,
+                         sleepEnd: s.end,
+                         userId: s.userId
+                       });
                      });
   }
 
@@ -59,46 +66,52 @@ export class Sleep {
     this.displayDeleteConfirmation.set(true);
   }
 
-  loadSleep() {
-    this.sleepService.getAllSleep()
-                     .subscribe((s) => this.sleepData.set(s));
+  loadSleeps() {
+    this.sleepService.getAllSleeps()
+                     .subscribe(s => this.sleeps.set(s));
+  }
+
+  loadUsers() {
+    this.userService.getAllUsers()
+                    .subscribe(s => this.users.set(s));
   }
 
   create() {
     const sleep = {
-      'sleep_start' : (this.sleepForm.value.sleepStart!.replace('T', ' ') ?? '') + ':00',
-      'sleep_end' : (this.sleepForm.value.sleepEnd!.replace('T', ' ') ?? '') + ':00',
-      'user_id' : this.sleepForm.value.userId ?? 0
+      'start' : this.sleepForm.value.sleepStart + ':00',
+      'end' : this.sleepForm.value.sleepEnd + ':00',
+      'userId' : this.sleepForm.value.userId
     };
 
     this.sleepService.createSleep(sleep)
                      .subscribe(s => {
                        console.log('Entry created:', s);
                        this.displayCreateForm.set(false);
-                       this.loadSleep();
+                       this.loadSleeps();
                      });
   }
 
   delete() {
-    this.sleepService.deleteSleep(this.selectedId()!)
+    this.sleepService.deleteSleep(this.selectedSleep()!)
                      .subscribe(s => {
-                       console.log(s, 'deleted')
-                       this.loadSleep();
+                       console.log('Entry deleted')
+                       this.displayDeleteConfirmation.set(false);
+                       this.loadSleeps();
                      });
   }
 
   update() {
     const sleep = {
-      'sleep_start' : (this.sleepForm.value.sleepStart!.replace('T', ' ') ?? '') + ':00',
-      'sleep_end' : (this.sleepForm.value.sleepEnd!.replace('T', ' ') ?? '') + ':00',
-      'user_id' : this.sleepForm.value.userId ?? 0
+      'start' : this.sleepForm.value.sleepStart + ':00',
+      'end' : this.sleepForm.value.sleepEnd + ':00',
+      'userId' : this.sleepForm.value.userId
     }
 
-    this.sleepService.updateSleep(this.selectedId()!, sleep)
+    this.sleepService.updateSleep(this.selectedSleep()!, sleep)
                      .subscribe(s => {
                        console.log('Entry updated:', s)
                        this.displayUpdateForm.set(false);
-                       this.loadSleep();
+                       this.loadSleeps();
                      });
   }
 }

@@ -2,38 +2,45 @@ import { Component, inject, signal } from '@angular/core';
 import { BathService } from '../../services/bath-service';
 import { IBath } from '../../models/ibath';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
+import { UserService } from '../../services/user-service';
+import { IUser } from '../../models/iuser';
 
 @Component({
   selector: 'app-bath',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './bath.html',
   styleUrl: './bath.css',
 })
 export class Bath {
   bathService = inject(BathService);
-  bathData = signal<Array<IBath>>([]);
-  selectedId = signal<number | null>(null);
+  userService = inject(UserService);
+  baths = signal<Array<IBath>>([]);
+  users = signal<Array<IUser>>([]);
+  selectedBath = signal<number | null>(null);
   displayUpdateForm = signal(false);
   displayCreateForm = signal(false);
   displayDeleteConfirmation = signal(false);
+  isSelected = signal(true);
   bathForm = new FormGroup({
     bathDateTime: new FormControl<string>(''),
-    userId: new FormControl<number>(0)
+    userId: new FormControl<number>(1)
   });
     
   ngOnInit() {
-    this.loadBath();
+    this.loadBaths();
+    this.loadUsers();
   }
   
   findSelectedRow() {
-    this.bathService.getBathById(this.selectedId()!)
-                     .subscribe(s => {
-                        s.dateTime = s.dateTime.slice(0, 16);
-                        this.bathForm.patchValue({
-                          bathDateTime: s.dateTime,
-                          userId: s.userId
-                        });
-                     });
+    this.bathService.getBathById(this.selectedBath()!)
+                    .subscribe(s => {
+                      s.dateTime = s.dateTime.slice(0, 16);
+                      this.bathForm.patchValue({
+                        bathDateTime: s.dateTime,
+                        userId: s.userId
+                      });
+                    });
   }
   
   toggleCreateForm() {
@@ -56,44 +63,50 @@ export class Bath {
     this.displayDeleteConfirmation.set(true);
   }
   
-  loadBath() {
-    this.bathService.getAllBath()
-                     .subscribe((s) => this.bathData.set(s));
+  loadBaths() {
+    this.bathService.getAllBaths()
+                    .subscribe(s => this.baths.set(s));
+  }
+
+  loadUsers() {
+    this.userService.getAllUsers()
+                    .subscribe(s => this.users.set(s));
   }
   
   create() {
     const bath = {
-      'bath_datetime' : (this.bathForm.value.bathDateTime!.replace('T', ' ') ?? '') + ':00',
-      'user_id' : this.bathForm.value.userId ?? 0
+      'dateTime' : this.bathForm.value.bathDateTime + ':00',
+      'userId' : this.bathForm.value.userId
     };
   
     this.bathService.createBath(bath)
-                     .subscribe(s => {
-                       console.log('Entry created:', s);
-                       this.displayCreateForm.set(false);
-                       this.loadBath();
-                     });
+                    .subscribe(s => {
+                      console.log('Entry created:', s);
+                      this.displayCreateForm.set(false);
+                      this.loadBaths();
+                    });
   }
   
   delete() {
-    this.bathService.deleteBath(this.selectedId()!)
-                     .subscribe(s => {
-                       console.log(s, 'deleted')
-                       this.loadBath();
-                     });
+    this.bathService.deleteBath(this.selectedBath()!)
+                    .subscribe(s => {
+                      console.log('Entry deleted')
+                      this.displayDeleteConfirmation.set(false);
+                      this.loadBaths();
+                    });
   }
   
   update() {
     const bath = {
-      'bath_datetime' : (this.bathForm.value.bathDateTime!.replace('T', ' ') ?? '') + ':00',
-      'user_id' : this.bathForm.value.userId ?? 0
+      'dateTime' : this.bathForm.value.bathDateTime + ':00',
+      'userId' : this.bathForm.value.userId
     };
   
-    this.bathService.updateBath(this.selectedId()!, bath)
-                     .subscribe(s => {
-                       console.log('Entry updated:', s)
-                       this.displayUpdateForm.set(false);
-                       this.loadBath();
-                     });
+    this.bathService.updateBath(this.selectedBath()!, bath)
+                    .subscribe(s => {
+                      console.log('Entry updated:', s)
+                      this.displayUpdateForm.set(false);
+                      this.loadBaths();
+                    });
   }
 }

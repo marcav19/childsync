@@ -7,25 +7,25 @@ import { IMeal } from '../models/imeal';
 })
 export class MealService {
   http = inject(HttpClient);
-  url = 'http://localhost:8000/api/meals';
+  endpoint = 'http://localhost:8000/api/meals';
 
   getMealById(id: number) {
-    return this.http.get<IMeal>(this.url + '/' + id);
+    return this.http.get<IMeal>(this.endpoint + '/' + id);
   }
 
-  getAllMeal() {
-    return this.http.get<Array<IMeal>>(this.url);
+  getAllMeals() {
+    return this.http.get<Array<IMeal>>(this.endpoint);
   }
 
-  createMeal(body: object) {
-    return this.http.post<IMeal>(this.url, body);
+  createMeal(request: object) {
+    return this.http.post<IMeal>(this.endpoint, request);
   }
 
   deleteMeal(id: number) {
-    return this.http.delete<IMeal>(this.url + '/' + id);
+    return this.http.delete<IMeal>(this.endpoint + '/' + id);
   }
 
-  updateMeal(id: number, body: object) {
-    return this.http.patch<IMeal>(this.url + '/' + id, body);
+  updateMeal(id: number, request: object) {
+    return this.http.put<IMeal>(this.endpoint + '/' + id, request);
   }
 }

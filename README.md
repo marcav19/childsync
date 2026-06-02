@@ -1,18 +1,18 @@
 # ChildSync
-Full-stack web app for logging daily occurences in a young child's life such as meals, naps, etc.
+This application is designed to bridge the communication between parents, co-parents, grandparents, nannies, and babysitters and stay updated on the daily occurences of children.
 
 ## Overview
-This application provides CRUD operations for managing database entries regarding a child's meals, nap times, bathroom breaks, medications, appointments, baths, and events.
+As a web app, it provides CRUD operations for managing entries regarding a child's meals, nap times, bathroom breaks, medications, appointments, baths, and activites.
 
 ### Capabilities:
-- Creation and deletion of entries
-- Editing data within a record
-- Retrieval of single or all entries within an occurence type
+- Creation, deletion, updating, and reading entries
+- Validation of data entry
+- Interactive dashboard
 
 ### Limitations:
 - Sorting and filtering
 - Authentication and authorization
-- Error handling
+- Custom error handling
 
 ## Tech Stack
 - Java 21
@@ -62,8 +62,9 @@ POST /api/user
 Request body:
 ```json
 {
-    "user_name" : "John Smith"
-    "user_email" : "john@aol.com"
+    "name" : "John Smith"
+    "email" : "john@aol.com"
+    "password" : "password"
 }
 ```
 

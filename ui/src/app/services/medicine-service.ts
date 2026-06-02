@@ -7,25 +7,25 @@ import { IMedicine } from '../models/imedicine';
 })
 export class MedicineService {
   http = inject(HttpClient);
-  url = 'http://localhost:8000/api/medicine';
+  endpoint = 'http://localhost:8000/api/medicines';
 
   getMedicineById(id: number) {
-    return this.http.get<IMedicine>(this.url + '/' + id);
+    return this.http.get<IMedicine>(this.endpoint + '/' + id);
   }
 
-  getAllMedicine() {
-    return this.http.get<Array<IMedicine>>(this.url);
+  getAllMedicines() {
+    return this.http.get<Array<IMedicine>>(this.endpoint);
   }
 
-  createMedicine(body: object) {
-    return this.http.post<IMedicine>(this.url, body);
+  createMedicine(request: object) {
+    return this.http.post<IMedicine>(this.endpoint, request);
   }
 
   deleteMedicine(id: number) {
-    return this.http.delete<IMedicine>(this.url + '/' + id);
+    return this.http.delete<IMedicine>(this.endpoint + '/' + id);
   }
 
-  updateMedicine(id: number, body: object) {
-    return this.http.patch<IMedicine>(this.url + '/' + id, body);
+  updateMedicine(id: number, request: object) {
+    return this.http.put<IMedicine>(this.endpoint + '/' + id, request);
   }
 }

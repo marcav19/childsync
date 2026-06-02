@@ -1,8 +1,19 @@
 nav {
-    margin: 16px;
-    width: 100%;
+    margin: 8px;
 }
 
 a {
-    margin: 8px;
+    padding: 8px;
+    text-decoration-line: none;
+    border-left: 2px black solid;
+    color: tan;
+    color: blue;
+}
+
+a:link, a:visited {
+    color: blue;
+}
+
+a:hover {
+    color: cyan;
 }

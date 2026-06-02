@@ -1,13 +1,14 @@
 package com.childsync.spring.service;
 
 import java.util.List;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 import com.childsync.spring.dto.request.ActivityRequest;
 import com.childsync.spring.dto.response.ActivityResponse;
 import com.childsync.spring.mapper.ActivityMapper;
 import com.childsync.spring.model.Activity;
+import com.childsync.spring.model.User;
 import com.childsync.spring.repository.ActivityRepository;
+import com.childsync.spring.repository.UserRepository;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -15,11 +16,13 @@ public class ActivityService {
 
     private final ActivityRepository activityRepo;
     private final ActivityMapper activityMapper;
+    private final UserRepository userRepo;
 
-    public ActivityService(ActivityRepository activityRepo, ActivityMapper activityMapper) {
+    public ActivityService(ActivityRepository activityRepo, ActivityMapper activityMapper, UserRepository userRepo) {
 
         this.activityRepo = activityRepo;
         this.activityMapper = activityMapper;
+        this.userRepo = userRepo;
 
     }
 
@@ -42,42 +45,52 @@ public class ActivityService {
     }
     
     @Transactional
-    public ActivityRequest create(ActivityRequest request) {
+    public ActivityResponse create(ActivityRequest request) {
+
+        User user = userRepo.findById(request.userId())
+                            .orElseThrow();
         
         Activity activity = activityMapper.activityRequestToActivity(request);
+        activity.setUser(user);
         activityRepo.save(activity);
 
-        return request;
+        ActivityResponse response = activityMapper.activityToActivityResponse(activity);
+
+        return response;
 
     }
 
     public String delete(Integer id) {
 
-        if (activityRepo.findById(id).equals(Optional.empty())) {
+        if (activityRepo.findById(id).isEmpty()) {
 
-            return "not found";
+            return "Deletion failed";
 
         } else {
 
             activityRepo.deleteById(id);
-            return "deleted";
+            return "Deletion successful";
 
         }
 
     }
 
     @Transactional
-    public ActivityRequest update(Integer id, ActivityRequest request) {
+    public ActivityResponse update(Integer id, ActivityRequest request) {
 
         Activity activity = activityRepo.findById(id)
                                         .orElseThrow();
+        User user = userRepo.findById(request.userId())
+                            .orElseThrow();
 
-        activity.setDatetime(request.datetime());
+        activity.setDateTime(request.dateTime());
         activity.setName(request.name());
-        activity.setUserid(request.userid());
+        activity.setUser(user);
         activityRepo.save(activity);
 
-        return request;
+        ActivityResponse response = activityMapper.activityToActivityResponse(activity);
+
+        return response;
 
     }
 }

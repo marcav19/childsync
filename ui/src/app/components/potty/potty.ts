@@ -2,39 +2,46 @@ import { Component, inject, signal } from '@angular/core';
 import { PottyService } from '../../services/potty-service';
 import { IPotty } from '../../models/ipotty';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
+import { UserService } from '../../services/user-service';
+import { IUser } from '../../models/iuser';
 
 @Component({
   selector: 'app-potty',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './potty.html',
   styleUrl: './potty.css',
 })
 export class Potty {
   pottyService = inject(PottyService);
-  pottyData = signal<Array<IPotty>>([]);
-  selectedId = signal<number | null>(null);
+  userService = inject(UserService);
+  potties = signal<Array<IPotty>>([]);
+  users = signal<Array<IUser>>([]);
+  selectedPotty = signal<number | null>(null);
   displayUpdateForm = signal(false);
   displayCreateForm = signal(false);
   displayDeleteConfirmation = signal(false);
+  isSelected = signal(true);
   pottyForm = new FormGroup({
     pottyDateTime: new FormControl<string>(''),
     pottyDescription: new FormControl<string>(''),
-    userId: new FormControl<number>(0)
+    userId: new FormControl<number>(1)
   });
   
   ngOnInit() {
-    this.loadPotty();
+    this.loadPotties();
+    this.loadUsers();
   }
 
   findSelectedRow() {
-    this.pottyService.getPottyById(this.selectedId()!)
+    this.pottyService.getPottyById(this.selectedPotty()!)
                      .subscribe(s => {
-                        s.dateTime = s.dateTime.slice(0, 16);
-                        this.pottyForm.patchValue({
-                          pottyDateTime: s.dateTime,
-                          pottyDescription: s.description,
-                          userId: s.userId
-                        });
+                       s.dateTime = s.dateTime.slice(0, 16);
+                       this.pottyForm.patchValue({
+                         pottyDateTime: s.dateTime,
+                         pottyDescription: s.description,
+                         userId: s.userId
+                       });
                      });
   }
 
@@ -58,46 +65,52 @@ export class Potty {
     this.displayDeleteConfirmation.set(true);
   }
 
-  loadPotty() {
-    this.pottyService.getAllPotty()
-                     .subscribe((s) => this.pottyData.set(s));
+  loadPotties() {
+    this.pottyService.getAllPotties()
+                     .subscribe(s => this.potties.set(s));
+  }
+
+  loadUsers() {
+    this.userService.getAllUsers()
+                    .subscribe(s => this.users.set(s));
   }
 
   create() {
     const potty = {
-      'potty_datetime' : (this.pottyForm.value.pottyDateTime!.replace('T', ' ') ?? '') + ':00',
-      'potty_description' : this.pottyForm.value.pottyDescription,
-      'user_id' : this.pottyForm.value.userId ?? 0
+      'dateTime' : this.pottyForm.value.pottyDateTime + ':00',
+      'description' : this.pottyForm.value.pottyDescription,
+      'userId' : this.pottyForm.value.userId
     };
 
     this.pottyService.createPotty(potty)
                      .subscribe(s => {
                        console.log('Entry created:', s);
                        this.displayCreateForm.set(false);
-                       this.loadPotty();
+                       this.loadPotties();
                      });
   }
 
   delete() {
-    this.pottyService.deletePotty(this.selectedId()!)
+    this.pottyService.deletePotty(this.selectedPotty()!)
                      .subscribe(s => {
-                       console.log(s, 'deleted')
-                       this.loadPotty();
+                       console.log('Entry deleted')
+                       this.displayDeleteConfirmation.set(false);
+                       this.loadPotties();
                      });
   }
 
   update() {
     const potty = {
-      'potty_datetime' : (this.pottyForm.value.pottyDateTime!.replace('T', ' ') ?? '') + ':00',
-      'potty_description' : this.pottyForm.value.pottyDescription,
-      'user_id' : this.pottyForm.value.userId ?? 0
+      'dateTime' : this.pottyForm.value.pottyDateTime + ':00',
+      'description' : this.pottyForm.value.pottyDescription,
+      'userId' : this.pottyForm.value.userId
     };
 
-    this.pottyService.updatePotty(this.selectedId()!, potty)
+    this.pottyService.updatePotty(this.selectedPotty()!, potty)
                      .subscribe(s => {
                        console.log('Entry updated:', s)
                        this.displayUpdateForm.set(false);
-                       this.loadPotty();
+                       this.loadPotties();
                      });
   }
 }

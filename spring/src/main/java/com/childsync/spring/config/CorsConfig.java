@@ -1,4 +1,4 @@
-package com.childsync.spring;
+package com.childsync.spring.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

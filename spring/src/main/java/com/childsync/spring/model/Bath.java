@@ -1,12 +1,15 @@
 package com.childsync.spring.model;
 
-import java.sql.Timestamp;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "baths")
@@ -14,49 +17,53 @@ public class Bath {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer bath_id;
+    private Integer id;
 
-    @JsonFormat(pattern = "MM/dd/yyyy HH:mm")
-    private Timestamp bath_datetime;
+    @Column(name = "datetime", unique = true)
+    @NotNull
+    private LocalDateTime dateTime;
 
-    private Integer user_id;
+    @ManyToOne
+    @JoinColumn(name = "userid")
+    @NotNull
+    private User user;
 
     protected Bath() { }
 
-    public Bath(Timestamp dateTime, Integer userId) {
+    public Bath(LocalDateTime dateTime, User user) {
 
-        bath_datetime = dateTime;
-        user_id = userId;
+        this.dateTime = dateTime;
+        this.user = user;
 
     }
 
     public Integer getId() {
 
-        return bath_id;
+        return id;
 
     }
 
-    public Timestamp getDateTime() {
+    public LocalDateTime getDateTime() {
 
-        return bath_datetime;
-
-    }
-
-    public Integer getUserId() {
-
-        return user_id;
+        return dateTime;
 
     }
 
-    public void setDateTime(Timestamp dateTime) {
+    public User getUser() {
 
-        bath_datetime = dateTime;
+        return user;
 
     }
 
-    public void setUserId(Integer userId) {
+    public void setDateTime(LocalDateTime dateTime) {
 
-        user_id = userId;
+        this.dateTime = dateTime;
+
+    }
+
+    public void setUser(User user) {
+
+        this.user = user;
 
     }
     

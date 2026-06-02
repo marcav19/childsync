@@ -3,5 +3,6 @@ export interface IMeal {
     dateTime: string,
     name: string,
     comment: string,
-    userId: number
+    userId: number,
+    userName: string
 }

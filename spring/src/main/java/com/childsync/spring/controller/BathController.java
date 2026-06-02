@@ -1,85 +1,65 @@
 package com.childsync.spring.controller;
 
-import java.sql.Timestamp;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
-import com.childsync.spring.model.Bath;
-import com.childsync.spring.repository.BathRepository;
+import com.childsync.spring.dto.request.BathRequest;
+import com.childsync.spring.dto.response.BathResponse;
+import com.childsync.spring.service.BathService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @RestController
+@RequestMapping("/api/baths")
 public class BathController {
     
-    @Autowired
-    BathRepository bathRepo;
+    private final BathService bathService;
 
-    @GetMapping("/api/baths")
-    public List<Bath> getAllBaths() {
-        
-        return bathRepo.findAll();
+    public BathController(BathService bathService) {
+
+        this.bathService = bathService;
 
     }
 
-    @PostMapping("/api/baths")
-    public Bath createBath(@RequestBody Map<String, String> body) {
+    @GetMapping("/{id}")
+    public BathResponse getBathById(@PathVariable("id") Integer id) {
+        
+        return bathService.getById(id);
+
+    }
     
-        Bath bath = new Bath(Timestamp.valueOf(body.get("bath_datetime")),
-                            Integer.parseInt(body.get("user_id")));
+    @GetMapping
+    public List<BathResponse> getAllBaths() {
         
-        return bathRepo.save(bath);
+        return bathService.getAll();
+
     }
 
-    @DeleteMapping("/api/baths/{id}")
+    @PostMapping
+    public BathResponse createBath(@RequestBody BathRequest request) {
+    
+        return bathService.create(request);
+
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public String deleteBath(@PathVariable("id") Integer id) {
 
-        if (bathRepo.findById(id).equals(Optional.empty())) {
-
-            return "Entry not found";
-        
-        } else {
-
-            bathRepo.deleteById(id);
-            return "Entry deleted";
-
-        }
+        return bathService.delete(id);
 
     }
 
-    @PatchMapping("/api/baths/{id}")
-    public Bath updateBath(@PathVariable("id") Integer id, @RequestBody Map<String, String> body) {
+    @PutMapping("/{id}")
+    public BathResponse updateBath(@PathVariable("id") Integer id, @RequestBody BathRequest request) {
 
-        Bath bath = bathRepo.findById(id).get();
-
-        Set<String> fields = new HashSet<String>();
-        fields.add("bath_datetime");
-        fields.add("user_id");
-
-        for (String key : body.keySet()) {
-
-            switch(key) {
-
-                case "bath_datetime":
-                    bath.setDateTime(Timestamp.valueOf(body.get("bath_datetime")));
-                    break;
-                case "user_id":
-                    bath.setUserId(Integer.parseInt(body.get("user_id")));
-                    break;
-
-            }
-
-        }
-
-        return bathRepo.save(bath);
+        return bathService.update(id, request);
 
     }
     

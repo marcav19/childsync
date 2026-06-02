@@ -3,5 +3,6 @@ export interface IMedicine {
     dateTime: string,
     name: string,
     dosage: string,
-    userId: number
+    userId: number,
+    userName: string
 }

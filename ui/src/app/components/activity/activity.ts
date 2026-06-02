@@ -2,20 +2,26 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivityService } from '../../services/activity-service';
 import { IActivity } from '../../models/iactivity';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { UserService } from '../../services/user-service';
+import { DatePipe } from '@angular/common';
+import { IUser } from '../../models/iuser';
 
 @Component({
   selector: 'app-activity',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './activity.html',
   styleUrl: './activity.css',
 })
 export class Activity {
   activityService = inject(ActivityService);
-  activityData = signal<Array<IActivity>>([]);
-  selectedId = signal<number | null>(null);
+  userService = inject(UserService);
+  activities = signal<Array<IActivity>>([]);
+  users = signal<Array<IUser>>([]);
+  selectedActivity = signal<number | null>(null);
   displayUpdateForm = signal(false);
   displayCreateForm = signal(false);
   displayDeleteConfirmation = signal(false);
+  isSelected = signal(true);
   activityForm = new FormGroup({
     activityDateTime: new FormControl<string>(''),
     activityName: new FormControl<string>(''),
@@ -23,19 +29,20 @@ export class Activity {
   });
   
   ngOnInit() {
-    this.loadActivity();
+    this.loadActivities();
+    this.loadUsers();
   }
 
   findSelectedRow() {
-    this.activityService.getActivityById(this.selectedId()!)
-                     .subscribe(s => {
-                        s.datetime = s.datetime.slice(0, 16);
-                        this.activityForm.patchValue({
-                          activityDateTime: s.datetime,
-                          activityName: s.name,
-                          userId: s.userid
+    this.activityService.getActivityById(this.selectedActivity()!)
+                        .subscribe(s => {
+                          s.dateTime = s.dateTime.slice(0, 16);
+                          this.activityForm.patchValue({
+                            activityDateTime: s.dateTime,
+                            activityName: s.name,
+                            userId: s.userId
+                          });
                         });
-                     });
   }
 
   toggleCreateForm() {
@@ -58,47 +65,52 @@ export class Activity {
     this.displayDeleteConfirmation.set(true);
   }
 
-  loadActivity() {
-    this.activityService.getAllActivity()
-                     .subscribe((s) => this.activityData.set(s));
+  loadActivities() {
+    this.activityService.getAllActivities()
+                        .subscribe(s => this.activities.set(s));
+  }
+
+  loadUsers() {
+    this.userService.getAllUsers()
+                    .subscribe(s => this.users.set(s));
   }
 
   create() {
     const activity = {
-      'datetime' : this.activityForm.value.activityDateTime + ':00',
+      'dateTime' : this.activityForm.value.activityDateTime + ':00',
       'name' : this.activityForm.value.activityName,
-      'userid' : this.activityForm.value.userId
+      'userId' : this.activityForm.value.userId
     };
 
     this.activityService.createActivity(activity)
-                     .subscribe(s => {
-                       console.log('Entry created:', s);
-                       this.displayCreateForm.set(false);
-                       this.loadActivity();
-                     });
+                        .subscribe(s => {
+                          console.log('Entry created:', s);
+                          this.displayCreateForm.set(false);
+                          this.loadActivities();
+                        });
   }
 
   delete() {
-    this.activityService.deleteActivity(this.selectedId()!)
-                     .subscribe(s => {
-                       console.log('deleted');
-                       this.displayDeleteConfirmation.set(false);
-                       this.loadActivity();
-                     });
+    this.activityService.deleteActivity(this.selectedActivity()!)
+                        .subscribe(s => {
+                          console.log('Entry deleted');
+                          this.displayDeleteConfirmation.set(false);
+                          this.loadActivities();
+                        });
   }
 
   update() {
     const activity = {
-      'datetime' : this.activityForm.value.activityDateTime + ':00',
+      'dateTime' : this.activityForm.value.activityDateTime + ':00',
       'name' : this.activityForm.value.activityName,
-      'userid' : this.activityForm.value.userId
+      'userId' : this.activityForm.value.userId
     };
 
-    this.activityService.updateActivity(this.selectedId()!, activity)
-                     .subscribe(s => {
-                       console.log('Entry updated:', s)
-                       this.displayUpdateForm.set(false);
-                       this.loadActivity();
-                     });
+    this.activityService.updateActivity(this.selectedActivity()!, activity)
+                        .subscribe(s => {
+                          console.log('Entry updated:', s)
+                          this.displayUpdateForm.set(false);
+                          this.loadActivities();
+                        });
   }
 }

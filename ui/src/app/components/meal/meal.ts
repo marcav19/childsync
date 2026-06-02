@@ -2,34 +2,41 @@ import { Component, inject, signal } from '@angular/core';
 import { MealService } from '../../services/meal-service';
 import { IMeal } from '../../models/imeal';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { UserService } from '../../services/user-service';
+import { IUser } from '../../models/iuser';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-meal',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './meal.html',
   styleUrl: './meal.css',
 })
 export class Meal {
   mealService = inject(MealService);
-  mealData = signal<Array<IMeal>>([]);
-  selectedId = signal<number | null>(null);
+  userService = inject(UserService);
+  meals = signal<Array<IMeal>>([]);
+  users = signal<Array<IUser>>([]);
+  selectedMeal = signal<number | null>(null);
   displayUpdateForm = signal(false);
   displayCreateForm = signal(false);
   displayDeleteConfirmation = signal(false);
+  isSelected = signal(true);
   mealForm = new FormGroup({
     mealDateTime: new FormControl<string>(''),
     mealName: new FormControl<string>(''),
     mealComment: new FormControl<string>(''),
-    userId: new FormControl<number>(0)
+    userId: new FormControl<number>(1)
   });
     
   ngOnInit() {
-    this.loadMeal();
+    this.loadMeals();
+    this.loadUsers();
   }
   
   findSelectedRow() {
-    this.mealService.getMealById(this.selectedId()!)
-                     .subscribe(s => {
+    this.mealService.getMealById(this.selectedMeal()!)
+                    .subscribe(s => {
                         s.dateTime = s.dateTime.slice(0, 16);
                         this.mealForm.patchValue({
                           mealDateTime: s.dateTime,
@@ -37,7 +44,7 @@ export class Meal {
                           mealComment: s.comment,
                           userId: s.userId
                         });
-                     });
+                    });
   }
 
   toggleCreateForm() {
@@ -60,48 +67,53 @@ export class Meal {
     this.displayDeleteConfirmation.set(true);
   }
   
-  loadMeal() {
-    this.mealService.getAllMeal()
-                     .subscribe((s) => this.mealData.set(s));
+  loadMeals() {
+    this.mealService.getAllMeals()
+                    .subscribe(s => this.meals.set(s));
+  }
+
+  loadUsers() {
+    this.userService.getAllUsers()
+                    .subscribe(s => this.users.set(s));
   }
   
   create() {
     const meal = {
-      'meal_datetime' : (this.mealForm.value.mealDateTime!.replace('T', ' ') ?? '') + ':00',
-      'meal_name' : this.mealForm.value.mealName,
-      'meal_comment' : this.mealForm.value.mealComment,
-      'user_id' : this.mealForm.value.userId ?? 0
+      'dateTime' : this.mealForm.value.mealDateTime + ':00',
+      'name' : this.mealForm.value.mealName,
+      'comment' : this.mealForm.value.mealComment,
+      'userId' : this.mealForm.value.userId
     };
   
     this.mealService.createMeal(meal)
-                     .subscribe(s => {
-                       console.log('Entry created:', s);
-                       this.displayCreateForm.set(false);
-                       this.loadMeal();
-                     });
+                    .subscribe(s => {
+                        console.log('Entry created:', s);
+                        this.displayCreateForm.set(false);
+                        this.loadMeals();
+                    });
   }
   
   delete() {
-    this.mealService.deleteMeal(this.selectedId()!)
-                     .subscribe(s => {
-                       console.log(s, 'deleted')
-                       this.loadMeal();
-                     });
+    this.mealService.deleteMeal(this.selectedMeal()!)
+                    .subscribe(s => {
+                        console.log('Entry deleted')
+                        this.loadMeals();
+                    });
   }
   
   update() {
     const meal = {
-      'meal_datetime' : (this.mealForm.value.mealDateTime!.replace('T', ' ') ?? '') + ':00',
-      'meal_name' : this.mealForm.value.mealName,
-      'meal_comment' : this.mealForm.value.mealComment,
-      'user_id' : this.mealForm.value.userId ?? 0
+      'dateTime' : this.mealForm.value.mealDateTime + ':00',
+      'name' : this.mealForm.value.mealName,
+      'comment' : this.mealForm.value.mealComment,
+      'userId' : this.mealForm.value.userId
     };
   
-    this.mealService.updateMeal(this.selectedId()!, meal)
-                     .subscribe(s => {
-                       console.log('Entry updated:', s)
-                       this.displayUpdateForm.set(false);
-                       this.loadMeal();
-                     });
+    this.mealService.updateMeal(this.selectedMeal()!, meal)
+                    .subscribe(s => {
+                        console.log('Entry updated:', s)
+                        this.displayUpdateForm.set(false);
+                        this.loadMeals();
+                    });
   }
 }

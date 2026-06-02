@@ -7,25 +7,25 @@ import { IBath } from '../models/ibath';
 })
 export class BathService {
   http = inject(HttpClient);
-  url = 'http://localhost:8000/api/baths';
+  endpoint = 'http://localhost:8000/api/baths';
 
   getBathById(id: number) {
-    return this.http.get<IBath>(this.url + '/' + id);
+    return this.http.get<IBath>(this.endpoint + '/' + id);
   }
 
-  getAllBath() {
-    return this.http.get<Array<IBath>>(this.url);
+  getAllBaths() {
+    return this.http.get<Array<IBath>>(this.endpoint);
   }
 
-  createBath(body: object) {
-    return this.http.post<IBath>(this.url, body);
+  createBath(request: object) {
+    return this.http.post<IBath>(this.endpoint, request);
   }
 
   deleteBath(id: number) {
-    return this.http.delete<IBath>(this.url + '/' + id);
+    return this.http.delete<IBath>(this.endpoint + '/' + id);
   }
 
-  updateBath(id: number, body: object) {
-    return this.http.patch<IBath>(this.url + '/' + id, body);
+  updateBath(id: number, request: object) {
+    return this.http.put<IBath>(this.endpoint + '/' + id, request);
   }
 }

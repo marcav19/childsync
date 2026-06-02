@@ -1,83 +1,86 @@
 package com.childsync.spring.model;
 
-import java.sql.Timestamp;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "sleep")
+@Table(name = "sleeps")
 public class Sleep {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "sleep_id")
-    private Integer sleepId;
+    private Integer id;
 
-    @Column(name = "sleep_start")
-    @JsonFormat(pattern = "MM/dd/yyyy HH:mm")
-    private Timestamp sleepStart;
+    @Column(unique = true)
+    @NotNull
+    private LocalDateTime start;
 
-    @Column(name = "sleep_end")
-    @JsonFormat(pattern = "MM/dd/yyyy HH:mm")
-    private Timestamp sleepEnd;
+    @Column(unique = true)
+    @NotNull
+    private LocalDateTime end;
 
-    @Column(name = "user_id")
-    private Integer userId;
+    @ManyToOne
+    @JoinColumn(name = "userid")
+    @NotNull
+    private User user;
 
     protected Sleep() { }
 
-    public Sleep(Timestamp start, Timestamp end, Integer userId) {
+    public Sleep(LocalDateTime start, LocalDateTime end, User user) {
 
-        sleepStart = start;
-        sleepEnd = end;
-        this.userId = userId;
+        this.start = start;
+        this.end = end;
+        this.user = user;
 
     }
 
     public Integer getId() {
 
-        return sleepId;
+        return id;
 
     }
 
-    public Timestamp getStart() {
+    public LocalDateTime getStart() {
 
-        return sleepStart;
-
-    }
-
-    public Timestamp getEnd() {
-
-        return sleepEnd;
+        return start;
 
     }
 
-    public Integer getUserId() {
+    public LocalDateTime getEnd() {
 
-        return userId;
-
-    }
-
-    public void setStart(Timestamp start) {
-
-        sleepStart = start;
+        return end;
 
     }
 
-    public void setEnd(Timestamp end) {
+    public User getUser() {
 
-        sleepEnd = end;
+        return user;
 
     }
 
-    public void setUserId(Integer userId) {
+    public void setStart(LocalDateTime start) {
 
-        this.userId = userId;
+        this.start = start;
+
+    }
+
+    public void setEnd(LocalDateTime end) {
+
+        this.end = end;
+
+    }
+
+    public void setUser(User user) {
+
+        this.user = user;
 
     }
 

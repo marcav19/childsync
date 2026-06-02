@@ -7,25 +7,25 @@ import { IPotty } from '../models/ipotty';
 })
 export class PottyService {
   http = inject(HttpClient);
-  url = 'http://localhost:8000/api/potty';
+  endpoint = 'http://localhost:8000/api/potties';
 
   getPottyById(id: number) {
-    return this.http.get<IPotty>(this.url + '/' + id);
+    return this.http.get<IPotty>(this.endpoint + '/' + id);
   }
 
-  getAllPotty() {
-    return this.http.get<Array<IPotty>>(this.url);
+  getAllPotties() {
+    return this.http.get<Array<IPotty>>(this.endpoint);
   }
 
-  createPotty(body: object) {
-    return this.http.post<IPotty>(this.url, body);
+  createPotty(request: object) {
+    return this.http.post<IPotty>(this.endpoint, request);
   }
 
   deletePotty(id: number) {
-    return this.http.delete<IPotty>(this.url + '/' + id);
+    return this.http.delete<IPotty>(this.endpoint + '/' + id);
   }
 
-  updatePotty(id: number, body: object) {
-    return this.http.patch<IPotty>(this.url + '/' + id, body);
+  updatePotty(id: number, request: object) {
+    return this.http.put<IPotty>(this.endpoint + '/' + id, request);
   }
 }

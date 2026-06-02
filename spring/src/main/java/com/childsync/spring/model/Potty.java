@@ -1,77 +1,85 @@
 package com.childsync.spring.model;
 
-import java.sql.Timestamp;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "potty")
+@Table(name = "potties")
 public class Potty {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer potty_id;
+    private Integer id;
+    
+    @Column(name = "datetime", unique = true)
+    @NotNull
+    private LocalDateTime dateTime;
 
-    private String potty_description;
+    @NotNull
+    private String description;
 
-    @JsonFormat(pattern = "MM/dd/yyyy HH:mm")
-    private Timestamp potty_datetime;
-
-    private Integer user_id;
+    @ManyToOne
+    @JoinColumn(name = "userid")
+    @NotNull
+    private User user;
     
     protected Potty() { }
 
-    public Potty(String description, Timestamp dateTime, Integer userId) {
+    public Potty(LocalDateTime dateTime, String description, User user) {
 
-        potty_description = description;
-        potty_datetime = dateTime;
-        user_id = userId;
+        this.dateTime = dateTime;
+        this.description = description;
+        this.user = user;
 
     }
 
     public Integer getId() {
 
-        return potty_id;
+        return id;
+
+    }
+
+    public LocalDateTime getDateTime() {
+
+        return dateTime;
 
     }
 
     public String getDescription() {
 
-        return potty_description;
+        return description;
 
     }
 
-    public Timestamp getDateTime() {
+    public User getUser() {
 
-        return potty_datetime;
+        return user;
 
     }
 
-    public Integer getUserId() {
+    public void setDateTime(LocalDateTime dateTime) {
 
-        return user_id;
+        this.dateTime = dateTime;
 
     }
 
     public void setDescription(String description) {
 
-        potty_description = description;
+        this.description = description;
 
     }
 
-    public void setDateTime(Timestamp dateTime) {
+    public void setUser(User user) {
 
-        potty_datetime = dateTime;
-
-    }
-
-    public void setUserId(Integer userId) {
-
-        user_id = userId;
+        this.user = user;
 
     }
     

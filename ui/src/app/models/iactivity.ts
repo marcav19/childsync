@@ -1,6 +1,7 @@
 export interface IActivity {
     id: number,
-    datetime: string,
+    dateTime: string,
     name: string,
-    userid: number
+    userId: number,
+    userName: string
 }

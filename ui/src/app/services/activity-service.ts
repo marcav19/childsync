@@ -7,25 +7,25 @@ import { IActivity } from '../models/iactivity';
 })
 export class ActivityService {
   http = inject(HttpClient);
-  url = 'http://localhost:8000/api/activities';
+  endpoint = 'http://localhost:8000/api/activities';
 
   getActivityById(id: number) {
-    return this.http.get<IActivity>(this.url + '/' + id);
+    return this.http.get<IActivity>(this.endpoint + '/' + id);
   }
 
-  getAllActivity() {
-    return this.http.get<Array<IActivity>>(this.url);
+  getAllActivities() {
+    return this.http.get<Array<IActivity>>(this.endpoint);
   }
 
-  createActivity(body: object) {
-    return this.http.post<IActivity>(this.url, body);
+  createActivity(request: object) {
+    return this.http.post<IActivity>(this.endpoint, request);
   }
 
   deleteActivity(id: number) {
-    return this.http.delete<IActivity>(this.url + '/' + id);
+    return this.http.delete<IActivity>(this.endpoint + '/' + id);
   }
 
-  updateActivity(id: number, body: object) {
-    return this.http.put<IActivity>(this.url + '/' + id, body);
+  updateActivity(id: number, request: object) {
+    return this.http.put<IActivity>(this.endpoint + '/' + id, request);
   }
 }

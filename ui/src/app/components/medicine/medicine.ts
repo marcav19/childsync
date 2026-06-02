@@ -2,42 +2,49 @@ import { Component, inject, signal } from '@angular/core';
 import { MedicineService } from '../../services/medicine-service';
 import { IMedicine } from '../../models/imedicine';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
+import { UserService } from '../../services/user-service';
+import { IUser } from '../../models/iuser';
 
 @Component({
   selector: 'app-medicine',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './medicine.html',
   styleUrl: './medicine.css',
 })
 export class Medicine {
   medicineService = inject(MedicineService);
-  medicineData = signal<Array<IMedicine>>([]);
-  selectedId = signal<number | null>(null);
+  userService = inject(UserService);
+  medicines = signal<Array<IMedicine>>([]);
+  users = signal<Array<IUser>>([]);
+  selectedMedicine = signal<number | null>(null);
   displayUpdateForm = signal(false);
   displayCreateForm = signal(false);
   displayDeleteConfirmation = signal(false);
+  isSelected = signal(true);
   medicineForm = new FormGroup({
     medicineDateTime: new FormControl<string>(''),
     medicineName: new FormControl<string>(''),
     medicineDosage: new FormControl<string>(''),
-    userId: new FormControl<number>(0)
+    userId: new FormControl<number>(1)
   });
   
   ngOnInit() {
-    this.loadMedicine();
+    this.loadMedicines();
+    this.loadUsers();
   }
 
   findSelectedRow() {
-    this.medicineService.getMedicineById(this.selectedId()!)
-                     .subscribe(s => {
-                        s.dateTime = s.dateTime.slice(0, 16);
-                        this.medicineForm.patchValue({
-                          medicineDateTime: s.dateTime,
-                          medicineName: s.name,
-                          medicineDosage: s.dosage,
-                          userId: s.userId
+    this.medicineService.getMedicineById(this.selectedMedicine()!)
+                        .subscribe(s => {
+                          s.dateTime = s.dateTime.slice(0, 16);
+                          this.medicineForm.patchValue({
+                            medicineDateTime: s.dateTime,
+                            medicineName: s.name,
+                            medicineDosage: s.dosage,
+                            userId: s.userId
+                          });
                         });
-                     });
   }
 
   toggleCreateForm() {
@@ -60,48 +67,54 @@ export class Medicine {
     this.displayDeleteConfirmation.set(true);
   }
 
-  loadMedicine() {
-    this.medicineService.getAllMedicine()
-                     .subscribe((s) => this.medicineData.set(s));
+  loadMedicines() {
+    this.medicineService.getAllMedicines()
+                        .subscribe(s => this.medicines.set(s));
+  }
+
+  loadUsers() {
+    this.userService.getAllUsers()
+                    .subscribe(s => this.users.set(s));
   }
 
   create() {
     const medicine = {
-      'medicine_datetime' : (this.medicineForm.value.medicineDateTime!.replace('T', ' ') ?? '') + ':00',
-      'medicine_name' : this.medicineForm.value.medicineName,
-      'medicine_dosage' : this.medicineForm.value.medicineDosage,
-      'user_id' : this.medicineForm.value.userId ?? 0
+      'dateTime' : this.medicineForm.value.medicineDateTime + ':00',
+      'name' : this.medicineForm.value.medicineName,
+      'dosage' : this.medicineForm.value.medicineDosage,
+      'userId' : this.medicineForm.value.userId
     };
 
     this.medicineService.createMedicine(medicine)
-                     .subscribe(s => {
-                       console.log('Entry created:', s);
-                       this.displayCreateForm.set(false);
-                       this.loadMedicine();
-                     });
+                        .subscribe(s => {
+                          console.log('Entry created:', s);
+                          this.displayCreateForm.set(false);
+                          this.loadMedicines();
+                        });
   }
 
   delete() {
-    this.medicineService.deleteMedicine(this.selectedId()!)
-                     .subscribe(s => {
-                       console.log(s, 'deleted')
-                       this.loadMedicine();
-                     });
+    this.medicineService.deleteMedicine(this.selectedMedicine()!)
+                        .subscribe(s => {
+                          console.log('Entry deleted')
+                          this.displayDeleteConfirmation.set(false);
+                          this.loadMedicines();
+                        });
   }
 
   update() {
     const medicine = {
-      'medicine_datetime' : (this.medicineForm.value.medicineDateTime!.replace('T', ' ') ?? '') + ':00',
-      'medicine_name' : this.medicineForm.value.medicineName,
-      'medicine_dosage' : this.medicineForm.value.medicineDosage,
-      'user_id' : this.medicineForm.value.userId ?? 0
+      'dateTime' : this.medicineForm.value.medicineDateTime + ':00',
+      'name' : this.medicineForm.value.medicineName,
+      'dosage' : this.medicineForm.value.medicineDosage,
+      'userId' : this.medicineForm.value.userId
     };
 
-    this.medicineService.updateMedicine(this.selectedId()!, medicine)
-                     .subscribe(s => {
-                       console.log('Entry updated:', s)
-                       this.displayUpdateForm.set(false);
-                       this.loadMedicine();
-                     });
+    this.medicineService.updateMedicine(this.selectedMedicine()!, medicine)
+                        .subscribe(s => {
+                          console.log('Entry updated:', s)
+                          this.displayUpdateForm.set(false);
+                          this.loadMedicines();
+                        });
   }
 }

@@ -1,7 +1,7 @@
 <h2>Meals</h2>
 <button class="create-button" (click)="toggleCreateForm()">Add</button>
-<button class="delete-button" (click)="toggleDeleteConfirmation()">Delete</button>
-<button class="update-button" (click)="toggleUpdateForm()">Update</button>
+<button class="delete-button" [disabled]="isSelected()" (click)="toggleDeleteConfirmation()">Delete</button>
+<button class="update-button" [disabled]="isSelected()" (click)="toggleUpdateForm()">Update</button>
 <table>
     <thead>
         <tr>
@@ -13,13 +13,13 @@
         </tr>
     </thead>
     <tbody>
-        @for (meal of mealData(); track meal.id) {
+        @for (meal of meals(); track meal.id) {
             <tr>
-                <td><input type="radio" name="meal" [value]="meal.id" (change)="selectedId.set(meal.id)" /></td>
-                <td>{{ meal.dateTime }}</td>
+                <td><input type="radio" name="meal" [value]="meal.id" (change)="isSelected.set(false); selectedMeal.set(meal.id);" /></td>
+                <td>{{ meal.dateTime | date:'short' }}</td>
                 <td>{{ meal.name }}</td>
                 <td>{{ meal.comment }}</td>
-                <td>{{ meal.userId }}</td>
+                <td>{{ meal.userName }}</td>
             </tr>
         }
     </tbody>
@@ -27,7 +27,7 @@
 @if (displayCreateForm()) {
     <div id="create-container" >
         <div id="create-form">
-            <form [formGroup]="mealForm" (ngSubmit)="create()">
+            <form autocomplete="off" [formGroup]="mealForm" (ngSubmit)="create()">
                 <label for="create-datetime">Datetime</label>
                 <input id="create-datetime" type="datetime-local" formControlName="mealDateTime" /> <br>
                 <label for="create-name">Name</label>
@@ -36,9 +36,12 @@
                 <input id="create-comment" type="text" maxlength="25" formControlName="mealComment" /> <br>
                 <label for="create-user">Created by</label>
                 <select id="create-user" name="users" formControlName="userId">
-                    <option value="1">Marc</option>
+                    @for (user of users(); track user.id) {
+                        <option [value]="user.id">{{ user.name }}</option>
+                    }
                 </select> <br>
                 <button type="submit">Create</button>
+                <button id="cancel" type="button" (click)="displayCreateForm.set(false)">Cancel</button>
             </form>
         </div>
     </div>
@@ -46,7 +49,7 @@
 @if (displayUpdateForm()) {
     <div id="update-container">
         <div id="update-form">
-            <form [formGroup]="mealForm" (ngSubmit)="update()">
+            <form autocomplete="off" [formGroup]="mealForm" (ngSubmit)="update()">
                 <label for="update-datetime">Datetime</label>
                 <input id="update-datetime" type="datetime-local" formControlName="mealDateTime" /> <br>
                 <label for="update-name">Name</label>
@@ -55,9 +58,12 @@
                 <input id="update-comment" type="text" maxlength="25" formControlName="mealComment" /> <br>
                 <label for="update-user">Created by</label>
                 <select id="update-user" name="users" formControlName="userId">
-                    <option value="1">Marc</option>
+                    @for (user of users(); track user.id) {
+                        <option [value]="user.id">{{ user.name }}</option>
+                    }
                 </select> <br>
                 <button type="submit">Update</button>
+                <button id="cancel" type="button" (click)="displayUpdateForm.set(false)">Cancel</button>
             </form>
         </div>
     </div>
@@ -66,7 +72,7 @@
 @if (displayDeleteConfirmation()) {
     <div id="delete-container">
         <div id="delete-confirmation">
-            <p>Confirm deletion</p>
+            <p>Confirm deletion.</p>
             <button id="confirm" type="button" (click)="delete()">Delete</button>
             <button id="cancel" type="button" (click)="displayDeleteConfirmation.set(false)">Cancel</button>
         </div>

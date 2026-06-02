@@ -7,25 +7,25 @@ import { ISleep } from '../models/isleep';
 })
 export class SleepService {
   http = inject(HttpClient);
-  url = 'http://localhost:8000/api/sleep';
+  endpoint = 'http://localhost:8000/api/sleeps';
 
   getSleepById(id: number) {
-    return this.http.get<ISleep>(this.url + '/' + id);
+    return this.http.get<ISleep>(this.endpoint + '/' + id);
   }
 
-  getAllSleep() {
-    return this.http.get<Array<ISleep>>(this.url);
+  getAllSleeps() {
+    return this.http.get<Array<ISleep>>(this.endpoint);
   }
 
-  createSleep(body: object) {
-    return this.http.post<ISleep>(this.url, body);
+  createSleep(request: object) {
+    return this.http.post<ISleep>(this.endpoint, request);
   }
 
   deleteSleep(id: number) {
-    return this.http.delete<ISleep>(this.url + '/' + id);
+    return this.http.delete<ISleep>(this.endpoint + '/' + id);
   }
 
-  updateSleep(id: number, body: object) {
-    return this.http.patch<ISleep>(this.url + '/' + id, body);
+  updateSleep(id: number, request: object) {
+    return this.http.put<ISleep>(this.endpoint + '/' + id, request);
   }
 }
